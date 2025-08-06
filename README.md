@@ -5,7 +5,7 @@
 VaultGuard是一款基于Electron开发的现代化密码管理器，专注于为用户提供安全、便捷的密码存储和管理服务。
 
 ## 功能特点
-![VaultGuard6](./vg6.png)
+![VaultGuard5](./vg5.png)
 
 ### 🔐 安全加密存储
 - 使用AES-256-CBC加密算法保护您的密码数据
