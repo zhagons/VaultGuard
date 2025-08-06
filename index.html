@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VaultGuard | 下一代密码管理器</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #10b981;
+      --accent: #3b82f6;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --card-gradient: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+      --border-radius: 12px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      margin: 0;
+    }
+
+    #app {
+      /* max-width: 1200px; */
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* 玻璃态设计元素 */
+    .glass {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    /* 头部样式 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      /* margin-bottom: 2.5rem; */
+      padding: 1rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-gradient);
+      border-radius: 50%;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .logo-text {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: var(--bg-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 主容器样式 */
+    .container {
+      display: grid;
+      /* grid-template-columns: 280px 1fr;
+      gap: 2rem; */
+    }
+
+    /* 主内容区样式 */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* 卡片样式 */
+    .card {
+      background: var(--card-gradient);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* 表单元素样式 */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    /* 按钮样式 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition), box-shadow 0.2s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+      border-radius: 16px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+      filter: brightness(1.08);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 2px rgba(99, 102, 241, 0.05);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: var(--gray);
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background-color: #64748b;
+    }
+
+    .btn-success {
+      background-color: var(--secondary);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #0d9488;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .btn-warning {
+      background-color: var(--warning);
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background-color: #d97706;
+    }
+
+    /* 优化顶部按钮组样式 */
+    .button-group .btn {
+      min-width: 120px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 0.85rem 1.7rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.10);
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      border: none;
+      transition: background 0.3s, box-shadow 0.2s, transform 0.1s, filter 0.2s;
+    }
+
+    .button-group .btn.btn-secondary {
+      background: linear-gradient(90deg, var(--gray) 0%, #64748b 100%);
+      color: #fff;
+    }
+
+    .button-group .btn.btn-primary {
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+    }
+
+    .button-group .btn svg {
+      margin-right: 0.5rem;
+    }
+
+    .button-group .btn:hover {
+      filter: brightness(1.12) saturate(1.1);
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.18);
+      transform: translateY(-3px) scale(1.04);
+    }
+
+    .button-group .btn:active {
+      filter: brightness(0.98);
+      transform: scale(0.97);
+    }
+
+    @media (max-width: 640px) {
+      .button-group .btn {
+        min-width: 0;
+        font-size: 1rem;
+        padding: 0.8rem 1.1rem;
+      }
+
+      .btn-logout span,
+      .button-group .btn span {
+        display: none;
+      }
+
+      .btn-logout svg,
+      .button-group .btn svg {
+        margin-right: 0;
+      }
+    }
+
+    /* 密码项样式 */
+    .password-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .password-item {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: 0 4px 24px rgba(99, 102, 241, 0.10);
+    }
+
+    .password-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .password-item-header {
+      padding: 1rem;
+      background: var(--bg-gradient);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .password-item-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      -webkit-line-clamp: 1;
+
+    }
+
+    .password-item-actions {
+      width: 82px;
+    }
+
+    .password-item-body {
+      padding: 1.5rem;
+    }
+
+    .password-field {
+      margin-bottom: 1rem;
+    }
+
+    .password-label {
+      font-size: 0.875rem;
+      color: var(--gray);
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .password-value {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem;
+      background-color: #f8fafc;
+      border-radius: var(--border-radius);
+      font-family: 'Courier New', monospace;
+      position: relative;
+    }
+
+    .password-value.masked {
+      cursor: pointer;
+      -webkit-text-security: disc;
+    }
+
+    .password-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    /* 优化的复制按钮样式 */
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      background-color: white;
+      color: var(--dark);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-copy:hover {
+      background-color: #f1f5f9;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-copy:active {
+      transform: translateY(0);
+    }
+
+    .btn-copy.username {
+      color: var(--primary);
+    }
+
+    .btn-copy.password {
+      color: var(--accent);
+    }
+
+    .btn-copy svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* 优化的卡片操作按钮样式 */
+    .card-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-action-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+      box-shadow: var(--shadow);
+    }
+
+    .card-action-btn:active {
+      transform: scale(1);
+    }
+
+    .card-action-btn.edit {
+      margin-right: 0.5rem;
+    }
+
+    .card-action-btn.delete:hover {
+      background-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .card-action-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2;
+    }
+
+    /* 空状态样式 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-gradient);
+      border-radius: 50%;
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .empty-state-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .empty-state-description {
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+      max-width: 400px;
+    }
+
+    /* 模态框样式 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 500px;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .modal.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #app {
+        padding: 1rem;
+      }
+
+      .password-list {
+        grid-template-columns: 1fr;
+      }
+
+      .form-control {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+
+      .btn {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.75rem;
+      }
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    /* 密码强度指示器 */
+    .password-strength {
+      height: 4px;
+      background-color: #e2e8f0;
+      border-radius: 2px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    /* Toast通知样式 */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      color: white;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .toast.show {
+      transform: translateX(0);
+    }
+
+    .toast-success {
+      background: var(--secondary);
+      background: linear-gradient(135deg, var(--secondary), #059669);
+    }
+
+    .toast-error {
+      background: var(--danger);
+      background: linear-gradient(135deg, var(--danger), #dc2626);
+    }
+
+    .toast svg {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* 搜索框样式 */
+    .search-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 1rem;
+      color: var(--gray);
+      z-index: 1;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 3rem;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: white;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .clear-search:hover {
+      background-color: #f1f5f9;
+      color: var(--dark);
+    }
+
+    .error {
+      color: red
+    }
+
+    /* 密码强度指示器 */
+    .password-strength {
+      height: 4px;
+      background-color: #e2e8f0;
+      border-radius: 2px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #94a3b8;
+    }
+
+    /* 按钮组样式 */
+    .button-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .button-group .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* 暗黑模式支持 */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: #818cf8;
+        --primary-dark: #6366f1;
+        --secondary: #34d399;
+        --accent: #60a5fa;
+        --danger: #f87171;
+        --warning: #fbbf24;
+        --dark: #f1f5f9;
+        --light: #1e293b;
+        --gray: #64748b;
+        --card-gradient: linear-gradient(145deg, #1e293b 0%, #334155 100%);
+        --bg-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      }
+
+      body {
+        background-color: #1e293b;
+        color: var(--dark);
+      }
+
+      .card,
+      .glass {
+        background: var(--card-gradient);
+        color: var(--dark);
+      }
+
+      .form-control {
+        background-color: #334155;
+        color: var(--dark);
+        border: 1px solid #475569;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+      }
+
+      .btn {
+        color: var(--dark);
+      }
+
+      .btn-primary,
+      .btn-secondary,
+      .btn-success,
+      .btn-danger,
+      .btn-warning,
+      .btn-accent {
+        color: #fff;
+      }
+    }
+
+    /* 表单输入框优化 */
+    .form-control {
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.06);
+      transition: var(--transition), box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    /* 按钮动效优化 */
+    .btn {
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08);
+      transition: var(--transition), box-shadow 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 2px rgba(99, 102, 241, 0.05);
+    }
+
+    /* 悬停更明显 */
+    .btn:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+    }
+
+    /* 移动端表单和按钮优化 */
+    @media (max-width: 640px) {
+      .form-control {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+
+      .btn {
+        font-size: 1.1rem;
+        padding: 1rem 1.2rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.75rem;
+      }
+    }
+
+    /* 统一阴影风格 */
+    .card,
+    .glass,
+    .password-item {
+      box-shadow: 0 4px 24px rgba(99, 102, 241, 0.10);
+    }
+
+    /* 输入框聚焦动画 */
+    .form-control {
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    /* 优化间距 */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <!-- 主界面 (默认隐藏) -->
+    <div id="mainApp" style="display: none;">
+      <div class="header">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div class="logo-text">VaultGuard</div>
+        </div>
+        <button id="logoutBtn" class="btn btn-warning btn-logout">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>安全退出</span>
+        </button>
+      </div>
+
+      <div class="container">
+        <div class="main-content">
+          <div class="card glass fade-in" style="animation-delay: 0.1s;">
+            <div class="card-header">
+              <h2 class="card-title">密码保险库</h2>
+              <div class="button-group">
+                <button id="importPasswordsBtn" class="btn btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>导入</span>
+                </button>
+                <button id="exportPasswordsBtn" class="btn btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>导出</span>
+                </button>
+                <button id="clearPasswordsBtn" class="btn btn-danger">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  <span>清空</span>
+                </button>
+                <button id="addPasswordBtn" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                  <span>添加</span>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="search-container">
+                <div class="search-box">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input type="text" id="passwordSearch" placeholder="搜索网站、用户名或备注...">
+                  <button id="clearSearch" class="clear-search" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" style="position: static;" width="16" height="16"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div id="passwordList" class="password-list">
+                <!-- 密码项将通过JavaScript动态添加 -->
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </div>
+                  <h3 class="empty-state-title">您的保险库是空的</h3>
+                  <p class="empty-state-description">点击"添加密码"按钮开始存储您的第一条密码记录</p>
+                  <button id="addFirstPasswordBtn" class="btn btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    添加密码
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 首次设置密码界面 -->
+    <div id="setupView" class="card" style="max-width: 500px; margin: 5rem auto;">
+      <div class="card-header">
+        <h2 class="card-title">初始化安全存储</h2>
+      </div>
+      <div class="card-body">
+        <p style="color: var(--gray); margin-bottom: 1.5rem;">设置您的主密码以开始使用VaultGuard。此密码将用于加密您的所有数据，请确保它足够强大且易于记忆。</p>
+
+        <div class="form-group">
+          <label for="masterPassword" class="form-label">主密码</label>
+          <input type="password" id="masterPassword" class="form-control" placeholder="输入您的主密码">
+          <div class="password-strength">
+            <div id="passwordStrengthBar" class="password-strength-bar"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword" class="form-label">确认密码</label>
+          <input type="password" id="confirmPassword" class="form-control" placeholder="再次输入您的主密码">
+        </div>
+
+        <div id="setupError" class="error" style="display: none; margin-bottom: 1rem;"></div>
+
+        <button id="setupBtn" class="btn btn-primary" style="width: 100%;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 10 0v4"></path>
+          </svg>
+          初始化安全存储
+        </button>
+      </div>
+    </div>
+
+    <!-- 登录界面 -->
+    <div id="loginView" class="card" style="max-width: 500px; margin: 5rem auto; display: none;">
+      <div class="card-header">
+        <h2 class="card-title">主人，欢迎回来！</h2>
+      </div>
+      <div class="card-body">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <div class="logo-icon" style="margin: 0 auto 1rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h2 style="font-weight: 600; margin-bottom: 0.5rem;">VaultGuard</h2>
+          <p style="color: var(--gray);">您的安全密码管理器</p>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword" class="form-label">主密码</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="输入您的主密码" autofocus>
+        </div>
+
+        <div id="loginError" class="error" style="display: none; margin-bottom: 1rem;"></div>
+
+        <button id="loginBtn" class="btn btn-primary" style="width: 100%;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+            <polyline points="10 17 15 12 10 7"></polyline>
+            <line x1="15" y1="12" x2="3" y2="12"></line>
+          </svg>
+          解锁保险库
+        </button>
+      </div>
+    </div>
+
+    <!-- 添加密码模态框 -->
+    <div id="addPasswordModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">添加新密码</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="newWebsite" class="form-label">网站/应用</label>
+            <input type="text" id="newWebsite" class="form-control" placeholder="例如: google.com">
+          </div>
+          <div class="form-group">
+            <label for="newUsername" class="form-label">用户名</label>
+            <input type="text" id="newUsername" class="form-control" placeholder="输入用户名或邮箱">
+          </div>
+          <div class="form-group">
+            <label for="newPassword" class="form-label">密码</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="password" id="newPassword" class="form-control" placeholder="输入密码" style="flex: 1;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="newNotes" class="form-label">备注 (可选)</label>
+            <textarea id="newNotes" class="form-control" rows="3" placeholder="添加任何备注信息"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelAddPasswordBtn" class="btn btn-secondary">取消</button>
+          <button id="savePasswordBtn" class="btn btn-primary">保存密码</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编辑密码模态框 -->
+    <div id="editPasswordModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">编辑密码</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editPasswordId">
+          <div class="form-group">
+            <label for="editWebsite" class="form-label">网站/应用</label>
+            <input type="text" id="editWebsite" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="editUsername" class="form-label">用户名</label>
+            <input type="text" id="editUsername" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="editPassword" class="form-label">密码</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="password" id="editPassword" class="form-control" style="flex: 1;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="editNotes" class="form-label">备注 (可选)</label>
+            <textarea id="editNotes" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelEditPasswordBtn" class="btn btn-secondary">取消</button>
+          <button id="updatePasswordBtn" class="btn btn-primary">保存更改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

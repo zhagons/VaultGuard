@@ -1,0 +1,52 @@
+{
+  "name": "vault.guard",
+  "version": "1.0.0",
+  "description": "Nothing is impossible !",
+  "copyright": "Copyright © 2025",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vault",
+    "guard",
+    "electron"
+  ],
+  "author": "zhagons",
+  "license": "ISC",
+  "build": {
+    "productName": "VG",
+    "appId": "com.vg.app",
+    "asar": true,
+    "win": {
+      "icon": "./icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./icon.ico",
+      "uninstallerIcon": "./icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "VG"
+    }
+  },
+  "devDependencies": {
+    "electron": "^21.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
