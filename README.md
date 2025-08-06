@@ -1,0 +1,2 @@
+# VaultGuard
+VaultGuard是一款基于Electron开发的现代化密码管理器，专注于为用户提供安全、便捷的密码存储和管理服务。
