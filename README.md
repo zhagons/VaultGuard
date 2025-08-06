@@ -47,7 +47,7 @@ VaultGuard是一款基于Electron开发的现代化密码管理器，专注于�
 ### 开发环境
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/izhagons/VaultGuard.git
 
 # 进入项目目录
 cd VaultGuard
